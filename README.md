@@ -6,4 +6,4 @@ DIY to minimize the risk of having information stolen.
 
 It outputs an activity.txt which contains the amount of keystrokes/mouse movements per 5 minutes.
 
-Note that keystrokes/mouse moves is not 1-on-1 equal to having worked. One could have been on top of the Kim Jung Un mountain thinking a bit about what should be done next which is also work.
+Note that keystrokes/mouse moves is not 1-on-1 equal to having worked. One could have been on top of the Kim Jung Un mountain thinking a bit about what should be done next which is also work. This log is more an indication of which times there has been worked for sure.
