@@ -12,6 +12,9 @@ import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.NativeHookException;
@@ -23,11 +26,27 @@ public class Main implements NativeKeyListener, NativeMouseMotionListener {
 	
 	private Integer keyboardStrokesLogged = 0;
 	private Integer mouseMovesLogged = 0;
-	private Integer lastFileWrite = 0;
 	
-	private Path file = Paths.get("activity.txt");
-
+	private Path file = Paths.get("C:\\localdata\\activity.txt");
+	
 	public static void main(String[] args) {
+		Main ourMain = new Main();
+		ourMain.ourMain(args);
+	}
+
+	public void ourMain(String[] args) {
+		
+		Timer t = new java.util.Timer();
+		t.schedule( 
+		        new java.util.TimerTask() {
+		            @Override
+		            public void run() {
+		            	writeResultsToFileAndReset();
+		            }
+		        }, 
+		        0, // Initial delay, run directly
+		        5*60*1000 // Repeat delay
+		);
 
 		try {
 			GlobalScreen.registerNativeHook();
@@ -35,36 +54,16 @@ public class Main implements NativeKeyListener, NativeMouseMotionListener {
 			//
 		}
 		
-		Main ourMain = new Main();
-		
-		GlobalScreen.addNativeKeyListener(ourMain);
-		GlobalScreen.addNativeMouseMotionListener(ourMain);
+		GlobalScreen.addNativeKeyListener(this);
+		GlobalScreen.addNativeMouseMotionListener(this);
 	}
 
 	public void nativeKeyPressed(NativeKeyEvent e) {
 		keyboardStrokesLogged++;
-		
-		checkIfFileWriteDue();
 	}
 	
 	public void nativeMouseMoved(NativeMouseEvent e) {
 		mouseMovesLogged++;
-		
-		checkIfFileWriteDue();
-	}
-	
-	private void checkIfFileWriteDue() {
-		
-		Integer unixTime = (int) (System.currentTimeMillis() / 1000);
-		
-		if (lastFileWrite + 60*5 < unixTime) { // Last file write was 5 minutes ago.
-			
-			// Record the current time as lastFileWrite.
-			lastFileWrite = unixTime;
-			
-			// Write the current logged data to file and reset the counters.
-			writeResultsToFileAndReset();
-		}
 	}
 	
 	private void writeResultsToFileAndReset() {
